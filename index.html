@@ -17,6 +17,16 @@
 <script src='https://cdn.firebase.com/js/client/1.0.6/firebase.js'></script>
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+
+<!--
+<link rel="stylesheet" href="css/normalize.min.css" />
+<link rel="stylesheet" href="css/ion.rangeSlider.css" />
+<link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
+
+<script src="js/jquery-1.11.0.min.js"></script>
+<script src="js/ion.rangeSlider.min.js"></script>
+-->
+
 <style>
 .leaflet-popup-close-button { display:none; }
 fieldset { width:240px; }
@@ -58,6 +68,46 @@ fieldset { width:240px; }
 .menu-ui a.active:hover {
 	background:#3074a4;
 }
+
+.leaflet-popup-content {
+    width:auto !important;
+}
+
+#hide {
+    display:none;
+}
+ 
+.rating input {
+    position:absolute;
+    filter:alpha(opacity=0);
+    -moz-opacity:0;
+    -khtml-opacity:0;
+    opacity:0;
+    cursor:pointer;
+    width:17px;
+}
+ 
+.rating span {
+    width:24px;
+    height:16px;
+    line-height:16px;
+    padding:1px 22px 1px 0; /* 1px FireFox fix */
+    background:url(stars.png) no-repeat -22px 0;
+}
+ 
+/* Change span immediately following the checked radio */
+ 
+.rating input:checked + span {
+    background-position:-22px 0;
+}
+ 
+/* Reset all remaining stars back to default background.
+   This supersedes the above due to its ordering. */
+ 
+.rating input:checked + span ~ span {
+    background-position:0 0;
+}
+
 </style>
 
 <div id='map'>
@@ -75,7 +125,84 @@ L.mapbox.accessToken = 'pk.eyJ1IjoiYWxhYmFyZ2EiLCJhIjoibUN4bE9LRSJ9.GmhkMSiHJ81b
 // this example.
 
 var pamplona = [42.810095, -1.635845];
-var base = new Firebase('https://smellmaps.firebaseio.com/'),
+var base = new Firebase('https://smellmaps.firebaseio.com/');
+
+var htmlForm = '<fieldset class="clearfix input-pill pill mobile-cols"><div class="smart-wrap">' +
+        '<div class="smart-forms smart-container wrap-2">'+
+            '<form method="post" action="" id="form-ui">'+
+                '<div class="form-body"> '+                  
+                    '<div class="frm-row"> ' +                  
+                        '<div class="colm colm6"> '                    
+                            '<div class="section"> ' +
+                                '<label class="field"> ' +
+                                    '<input type="text" name="from" id="from" class="gui-input" placeholder="Input no icon"> ' +
+                                '</label> ' +
+                            '</div><!-- end section -->    '   +                                         
+                            '<div class="section"> ' +
+                                '<label class="field prepend-icon"> ' +
+                                    '<input type="text" name="firstname" id="firstname" class="gui-input"  placeholder="Text input icon left">' +
+                                    '<label for="firstname" class="field-icon"><i class="fa fa-user"></i></label> '
+                                '</label>' +
+                            '</div><!-- end section -->' +
+                        '</div><!-- end .colm6 section -->' +
+                        '<div class="colm colm6"> '                       
+                            '<div class="section"> ' +
+                                '<label class="field prepend-icon"> ' +
+                                    '<input type="url" name="website" id="website" class="gui-input" placeholder="URL input"> ' +
+                                    '<label for="website" class="field-icon"><i class="fa fa-globe"></i></label>  '
+                                '</label> ' +
+                            '</div><!-- end section -->                           '   +                    
+                            '<div class="section"> ' +
+                                '<label class="field prepend-icon"> ' +
+                                    '<input type="email" name="email" id="email" class="gui-input" placeholder="Email input"> ' +
+                                    '<label for="email" class="field-icon"><i class="fa fa-envelope"></i></label>  '
+                                '</label> ' +
+                            '</div><!-- end section --> ' +
+                        '</div><!-- end .colm6 section --> ' +
+                    '</div><!-- end .frm-row section -->  ' +
+                '</div><!-- end .form-body section --> ' +
+            '</form> '    +       
+        '</div><!-- end .smart-forms section --> ' +
+    '</div><!-- end .smart-wrap section --></fieldset>';
+
+
+var form1 = '<fieldset class="clearfix input-pill pill mobile-cols">Nombre<input type="text" id="nombre" class="col9" />Mensaje<input type="text" id="mensaje" class="col9" /><button id="add-button" class="col3">Añadir</button></fieldset>';
+
+var form5 = '<input name="dname" placeholder="Olor" type="text">' +
+'<input name="demail" placeholder="Lugar" type="text" size="10">' +
+'<input name="demail" placeholder="Descripción del olor" type="text" size="35">' + '<br />' +
+'<input id="esperado" type="radio" name="esperado" value="esperado">' +
+'  <label for="esperado">esperado</label>' +
+'  <input id="inesperado" type="radio" name="esperado" value="inesperado">' +
+'  <label for="inesperado">inesperado</label>' + '<br />' +
+'<input name="demail" placeholder="Olor" type="text">' +
+'<textarea rows="4" cols="30" name="dfeel" placeholder="¿Cómo le hace sentir este olor? Por favor, escriba cualquier recuerdo o situación  que relacione con este aroma.">' +
+'</textarea>' + '<br />' +
+'<div class="rating">' +
+'    POTENCIA <input type="radio" name="potencia" value="0" checked /><span id="hide"></span>' +
+'   <input type="radio" name="potencia" value="1" /><span></span>' +
+'    <input type="radio" name="potencia" value="2" /><span></span>' +
+'    <input type="radio" name="potencia" value="3" /><span></span>' +
+'    <input type="radio" name="potencia" value="4" /><span></span>' +
+'    <input type="radio" name="potencia" value="5" /><span></span>' +
+'</div>' +  
+'<div class="rating">' +
+'    SENSACIÓN <input type="radio" name="sensacion" value="0" checked /><span id="hide"></span>' +
+'   <input type="radio" name="sensacion" value="1" /><span></span>' +
+'    <input type="radio" name="sensacion" value="2" /><span></span>' +
+'    <input type="radio" name="sensacion" value="3" /><span></span>' +
+'    <input type="radio" name="sensacion" value="4" /><span></span>' +
+'    <input type="radio" name="sensacion" value="5" /><span></span>' +
+'</div>' +  
+'<div class="rating">' +
+'    MOVIMIENTO <input type="radio" name="movimiento" value="0" checked /><span id="hide"></span>' +
+'   <input type="radio" name="movimiento" value="1" /><span></span>' +
+'    <input type="radio" name="movimiento" value="2" /><span></span>' +
+'    <input type="radio" name="movimiento" value="3" /><span></span>' +
+'    <input type="radio" name="movimiento" value="4" /><span></span>' +
+'    <input type="radio" name="movimiento" value="5" /><span></span>' +
+'</div>' +  '<br />' +
+'<input name="dsubmit" type="submit" value="Añadir al mapa">';
 
 map = L.mapbox.map('map', 'examples.map-i86nkdio').setView(pamplona, 13);
 
@@ -95,7 +222,7 @@ var marker = L.marker(pamplona, {
     // Add a form to that marker that lets them specify a message and click Add
     // to add the data.
  })
-  .bindPopup('<fieldset class="clearfix input-pill pill mobile-cols">Nombre<input type="text" id="nombre" class="col9" />Mensaje<input type="text" id="mensaje" class="col9" /><button id="add-button" class="col3">Añadir</button></fieldset>')
+  .bindPopup(form5)
   .addTo(map)
   .openPopup();
 
@@ -203,6 +330,8 @@ base.limit(200).on('child_added', function(snapshot) {
         })
         .addTo(map);
 });
+
+
 </script>
 </body>
 </html>
