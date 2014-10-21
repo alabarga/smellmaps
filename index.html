@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Smellmaps</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.3/leaflet.fullscreen.css' rel='stylesheet' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.3/Leaflet.fullscreen.min.js'></script>
+<script src='https://cdn.firebase.com/js/client/1.0.6/firebase.js'></script>
+<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+<style>
+.leaflet-popup-close-button { display:none; }
+fieldset { width:240px; }
+
+.menu-ui {
+  background:#fff;
+  position:absolute;
+  top:10px;right:10px;
+  z-index:1;
+  border-radius:3px;
+  width:120px;
+  border:1px solid rgba(0,0,0,0.4);
+ }
+.menu-ui a {
+	font-size:13px;
+	color:#404040;
+	display:block;
+	margin:0;padding:0;
+	padding:5px 10px;
+	text-decoration:none;
+	border-bottom:1px solid rgba(0,0,0,0.25);
+	text-align:center;
+}
+.menu-ui a:first-child {
+	border-radius:3px 3px 0 0;
+}
+.menu-ui a:last-child {
+	border:none;
+	border-radius:0 0 3px 3px;
+}
+.menu-ui a:hover {
+	background:#f8f8f8;
+	color:#404040;
+}
+.menu-ui a.active {
+	background:#3887BE;
+	color:#FFF;
+}
+.menu-ui a.active:hover {
+	background:#3074a4;
+}
+</style>
+
+<div id='map'>
+<nav class='menu-ui'>
+  <a href='#' id='nuevo' class='active'>Nuevo olor</a>
+  <a href='#' id='legend'>Información</a>
+</nav>
+</div>
+<script>
+
+L.mapbox.accessToken = 'pk.eyJ1IjoiYWxhYmFyZ2EiLCJhIjoibUN4bE9LRSJ9.GmhkMSiHJ81b1ZKfGYRurA';
+// Connect to the example firebase. This is a free account, and so it
+// will fail if given more than 50 concurrent users. Create an account at
+// http://firebaseio.com/ and use your own database if you want to try out
+// this example.
+
+var pamplona = [42.810095, -1.635845];
+var base = new Firebase('https://smellmaps.firebaseio.com/'),
+
+map = L.mapbox.map('map', 'examples.map-i86nkdio').setView(pamplona, 13);
+
+
+    // Generate a random color for the marker, just for fun.
+    color = '#' + [
+        (~~(Math.random() * 16)).toString(16),
+        (~~(Math.random() * 16)).toString(16),
+        (~~(Math.random() * 16)).toString(16)].join('');
+
+// Create the marker that the user drags to add their message to the map
+var marker = L.marker(pamplona, {
+    draggable: true,
+    icon: L.mapbox.marker.icon({
+        'marker-color': color
+    })
+    // Add a form to that marker that lets them specify a message and click Add
+    // to add the data.
+ })
+  .bindPopup('<fieldset class="clearfix input-pill pill mobile-cols">Nombre<input type="text" id="nombre" class="col9" />Mensaje<input type="text" id="mensaje" class="col9" /><button id="add-button" class="col3">Añadir</button></fieldset>')
+  .addTo(map)
+  .openPopup();
+
+  L.DomEvent.addListener(L.DomUtil.get('add-button'), 'click', function() {
+        // First, clean the potential-HTML they've added to the value.
+	var nombre = L.DomUtil.get('nombre').value;
+        var mensaje = L.DomUtil.get('mensaje').value;
+        // Get the current draggable marker's position and GeoJSON representation
+        var geojson = marker.toGeoJSON();
+        geojson.properties['marker-color'] = color;
+	geojson.properties.nombre = nombre;
+        geojson.properties.mensaje = mensaje;
+        // And save it to Firebase
+        // base.push(geojson);
+	console.log('enviado');
+	map.getContainer().querySelector('#nuevo').className = '';
+        marker.closePopup();
+    });
+
+
+var fullscreenControl = new L.Control.Fullscreen();
+fullscreenControl.addTo(map);
+var geocode = L.mapbox.geocoderControl('mapbox.places-v1');
+geocode.addTo(map);
+
+var legend = 'Smellmaps. Un proyecto de Kate. Visualización desarrollada por Alberto Labarga.';
+
+map.getContainer().querySelector('#legend').onclick = function() {
+    if (this.className === 'active') {
+        map.legendControl.removeLegend(legend);
+        this.className = '';
+    } else {
+        map.legendControl.addLegend(legend);
+        this.className = 'active';
+    }
+    return false;
+};
+
+map.getContainer().querySelector('#nuevo').onclick = function() {
+
+    if (this.className === 'active') {
+	//map.getContainer().querySelector('#nuevo').className = '';
+    } else {
+	marker.openPopup();
+        map.getContainer().querySelector('#nuevo').className = 'active';
+	// When the user clicks Add
+    L.DomEvent.addListener(L.DomUtil.get('add-button'), 'click', function() {
+        // First, clean the potential-HTML they've added to the value.
+	var nombre = L.DomUtil.get('nombre').value;
+        var mensaje = L.DomUtil.get('mensaje').value;
+        // Get the current draggable marker's position and GeoJSON representation
+        var geojson = marker.toGeoJSON();
+        geojson.properties['marker-color'] = color;
+	geojson.properties.nombre = nombre;
+        geojson.properties.mensaje = mensaje;
+        // And save it to Firebase
+        // base.push(geojson);
+	
+        console.log('enviado');
+	map.getContainer().querySelector('#nuevo').className = '';
+        marker.closePopup();
+    });
+
+    }
+    return false;
+};
+
+// Every time the marker is dragged, update the form.
+marker.on('dragend', function(e) {
+    marker.openPopup();
+
+    // When the user clicks Add
+    L.DomEvent.addListener(L.DomUtil.get('add-button'), 'click', function() {
+        // First, clean the potential-HTML they've added to the value.
+	var nombre = L.DomUtil.get('nombre').value;
+        var mensaje = L.DomUtil.get('mensaje').value;
+        // Get the current draggable marker's position and GeoJSON representation
+        var geojson = marker.toGeoJSON();
+        geojson.properties['marker-color'] = color;
+	geojson.properties.nombre = nombre;
+        geojson.properties.mensaje = mensaje;
+        // And save it to Firebase
+        // base.push(geojson);
+	console.log('enviado');
+	map.getContainer().querySelector('#nuevo').className = '';
+        marker.closePopup();
+    });
+});
+
+// With a cap of 200, listen for new markers being added to the map.
+base.limit(200).on('child_added', function(snapshot) {
+    // And for each new marker, add a featureLayer.
+    L.mapbox.featureLayer(snapshot.val())
+        .eachLayer(function(l) {
+            // Which positions markers below the marker you drag, so that
+            // they don't overlap in the z-index.
+            l.setZIndexOffset(-1000)
+            // And each marker should have a label with its title.
+            var geojson = l.toGeoJSON();
+            if (geojson && geojson.properties && geojson.properties.title) {
+                l.bindLabel(L.mapbox.sanitize(geojson.properties.title), {
+                    noHide: true
+                });
+            }
+        })
+        .addTo(map);
+});
+</script>
+</body>
+</html>
