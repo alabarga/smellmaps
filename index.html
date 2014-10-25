@@ -92,7 +92,7 @@ fieldset { width:240px; }
     height:16px;
     line-height:16px;
     padding:1px 22px 1px 0; /* 1px FireFox fix */
-    background:url(stars.png) no-repeat -22px 0;
+    background:url(img/stars.png) no-repeat -22px 0;
 }
  
 /* Change span immediately following the checked radio */
@@ -125,7 +125,7 @@ L.mapbox.accessToken = 'pk.eyJ1IjoiYWxhYmFyZ2EiLCJhIjoibUN4bE9LRSJ9.GmhkMSiHJ81b
 // this example.
 
 var pamplona = [42.810095, -1.635845];
-var base = new Firebase('https://smellmaps.firebaseio.com/');
+var base = new Firebase('https://smellmaps.firebaseio.com/olores/');
 
 var htmlForm = '<fieldset class="clearfix input-pill pill mobile-cols"><div class="smart-wrap">' +
         '<div class="smart-forms smart-container wrap-2">'+
@@ -168,41 +168,48 @@ var htmlForm = '<fieldset class="clearfix input-pill pill mobile-cols"><div clas
 
 var form1 = '<fieldset class="clearfix input-pill pill mobile-cols">Nombre<input type="text" id="nombre" class="col9" />Mensaje<input type="text" id="mensaje" class="col9" /><button id="add-button" class="col3">Añadir</button></fieldset>';
 
-var form5 = '<input name="dname" placeholder="Olor" type="text">' +
-'<input name="demail" placeholder="Lugar" type="text" size="10">' +
-'<input name="demail" placeholder="Descripción del olor" type="text" size="35">' + '<br />' +
+var form5 = '<input id="olor" name="olor" placeholder="Olor" type="text">' +
+'<input id="lugar" name="lugar" placeholder="Lugar" type="text" size="10">' +
 '<input id="esperado" type="radio" name="esperado" value="esperado">' +
 '  <label for="esperado">esperado</label>' +
 '  <input id="inesperado" type="radio" name="esperado" value="inesperado">' +
 '  <label for="inesperado">inesperado</label>' + '<br />' +
-'<input name="demail" placeholder="Olor" type="text">' +
-'<textarea rows="4" cols="30" name="dfeel" placeholder="¿Cómo le hace sentir este olor? Por favor, escriba cualquier recuerdo o situación  que relacione con este aroma.">' +
-'</textarea>' + '<br />' +
 '<div class="rating">' +
-'    POTENCIA <input type="radio" name="potencia" value="0" checked /><span id="hide"></span>' +
-'   <input type="radio" name="potencia" value="1" /><span></span>' +
-'    <input type="radio" name="potencia" value="2" /><span></span>' +
-'    <input type="radio" name="potencia" value="3" /><span></span>' +
-'    <input type="radio" name="potencia" value="4" /><span></span>' +
-'    <input type="radio" name="potencia" value="5" /><span></span>' +
+'    INTENSIDAD' + '<br />' +
+'    Suave ------------ Fuerte' + '<br />' +
+'   <input id="intensidad" type="radio" name="intensidad" value="0" checked /><span id="hide"></span>' +
+'   <input id="intensidad" type="radio" name="intensidad" value="1" /><span></span>' +
+'   <input id="intensidad" type="radio" name="intensidad" value="2" /><span></span>' +
+'   <input id="intensidad" type="radio" name="intensidad" value="3" /><span></span>' +
+'   <input id="intensidad" type="radio" name="intensidad" value="4" /><span></span>' +
+'   <input id="intensidad" type="radio" name="intensidad" value="5" /><span></span>' +
+'   <input id="intensidad" type="radio" name="intensidad" value="6" /><span></span>' +
 '</div>' +  
 '<div class="rating">' +
-'    SENSACIÓN <input type="radio" name="sensacion" value="0" checked /><span id="hide"></span>' +
-'   <input type="radio" name="sensacion" value="1" /><span></span>' +
-'    <input type="radio" name="sensacion" value="2" /><span></span>' +
-'    <input type="radio" name="sensacion" value="3" /><span></span>' +
-'    <input type="radio" name="sensacion" value="4" /><span></span>' +
-'    <input type="radio" name="sensacion" value="5" /><span></span>' +
+'    SENSACIÓN' + '<br />' +
+'    Desagradable ------ Agradable' + '<br />' +
+'    <input id="sensacion" type="radio" name="sensacion" value="0" checked /><span id="hide"></span>' +
+'    <input id="sensacion" type="radio" name="sensacion" value="1" /><span></span>' +
+'    <input id="sensacion" type="radio" name="sensacion" value="2" /><span></span>' +
+'    <input id="sensacion" type="radio" name="sensacion" value="3" /><span></span>' +
+'    <input id="sensacion" type="radio" name="sensacion" value="4" /><span></span>' +
+'    <input id="sensacion" type="radio" name="sensacion" value="5" /><span></span>' +
+'    <input id="sensacion" type="radio" name="sensacion" value="6" /><span></span>' +
 '</div>' +  
 '<div class="rating">' +
-'    MOVIMIENTO <input type="radio" name="movimiento" value="0" checked /><span id="hide"></span>' +
-'   <input type="radio" name="movimiento" value="1" /><span></span>' +
-'    <input type="radio" name="movimiento" value="2" /><span></span>' +
-'    <input type="radio" name="movimiento" value="3" /><span></span>' +
-'    <input type="radio" name="movimiento" value="4" /><span></span>' +
-'    <input type="radio" name="movimiento" value="5" /><span></span>' +
+'    MOVIMIENTO ' + '<br />' +
+'    Estático ------------ Dinámico' + '<br />' +
+'    <input id="movimiento" type="radio" name="movimiento" value="0" checked /><span id="hide"></span>' +
+'    <input id="movimiento" type="radio" name="movimiento" value="1" /><span></span>' +
+'    <input id="movimiento" type="radio" name="movimiento" value="2" /><span></span>' +
+'    <input id="movimiento" type="radio" name="movimiento" value="3" /><span></span>' +
+'    <input id="movimiento" type="radio" name="movimiento" value="4" /><span></span>' +
+'    <input id="movimiento" type="radio" name="movimiento" value="5" /><span></span>' +
+'    <input id="movimiento" type="radio" name="movimiento" value="6" /><span></span>' +
 '</div>' +  '<br />' +
-'<input name="dsubmit" type="submit" value="Añadir al mapa">';
+'<textarea rows="4" cols="30" id="feeling" name="feeling" placeholder="¿Cómo le hace sentir este olor? Por favor, escriba cualquier recuerdo o situación  que relacione con este aroma.">' +
+'</textarea>' + '<br />' +
+'<input id="add-button" name="add-button" type="submit" value="Añadir al mapa">';
 
 map = L.mapbox.map('map', 'examples.map-i86nkdio').setView(pamplona, 13);
 
@@ -212,6 +219,8 @@ map = L.mapbox.map('map', 'examples.map-i86nkdio').setView(pamplona, 13);
         (~~(Math.random() * 16)).toString(16),
         (~~(Math.random() * 16)).toString(16),
         (~~(Math.random() * 16)).toString(16)].join('');
+
+    color = '#f44';
 
 // Create the marker that the user drags to add their message to the map
 var marker = L.marker(pamplona, {
@@ -228,17 +237,28 @@ var marker = L.marker(pamplona, {
 
   L.DomEvent.addListener(L.DomUtil.get('add-button'), 'click', function() {
         // First, clean the potential-HTML they've added to the value.
-	var nombre = L.DomUtil.get('nombre').value;
-        var mensaje = L.DomUtil.get('mensaje').value;
+	    var olor = L.DomUtil.get('olor').value;
+        alert(olor);
+        var lugar = L.DomUtil.get('lugar').value;
+        var esperado = L.DomUtil.get('esperado').value;
+        var intensidad = L.DomUtil.get('intensidad').value;
+        var movimiento = L.DomUtil.get('movimiento').value;
+        var sensacion = L.DomUtil.get('sensacion').value; 
+        var feeling = L.DomUtil.get('feeling').value;                
         // Get the current draggable marker's position and GeoJSON representation
         var geojson = marker.toGeoJSON();
         geojson.properties['marker-color'] = color;
-	geojson.properties.nombre = nombre;
-        geojson.properties.mensaje = mensaje;
+	    geojson.properties.olor = olor;
+        geojson.properties.lugar = lugar;
+        geojson.properties.esperado = esperado;
+        geojson.properties.intensidad = intensidad;
+        geojson.properties.sensacion = sensacion;
+        geojson.properties.movimiento = movimiento;
+        geojson.properties.feeling = feeling;        
         // And save it to Firebase
-        // base.push(geojson);
-	console.log('enviado');
-	map.getContainer().querySelector('#nuevo').className = '';
+        base.push(geojson);
+	    console.log('enviado');
+	    map.getContainer().querySelector('#nuevo').className = '';
         marker.closePopup();
     });
 
@@ -261,34 +281,6 @@ map.getContainer().querySelector('#legend').onclick = function() {
     return false;
 };
 
-map.getContainer().querySelector('#nuevo').onclick = function() {
-
-    if (this.className === 'active') {
-	//map.getContainer().querySelector('#nuevo').className = '';
-    } else {
-	marker.openPopup();
-        map.getContainer().querySelector('#nuevo').className = 'active';
-	// When the user clicks Add
-    L.DomEvent.addListener(L.DomUtil.get('add-button'), 'click', function() {
-        // First, clean the potential-HTML they've added to the value.
-	var nombre = L.DomUtil.get('nombre').value;
-        var mensaje = L.DomUtil.get('mensaje').value;
-        // Get the current draggable marker's position and GeoJSON representation
-        var geojson = marker.toGeoJSON();
-        geojson.properties['marker-color'] = color;
-	geojson.properties.nombre = nombre;
-        geojson.properties.mensaje = mensaje;
-        // And save it to Firebase
-        // base.push(geojson);
-	
-        console.log('enviado');
-	map.getContainer().querySelector('#nuevo').className = '';
-        marker.closePopup();
-    });
-
-    }
-    return false;
-};
 
 // Every time the marker is dragged, update the form.
 marker.on('dragend', function(e) {
@@ -297,12 +289,27 @@ marker.on('dragend', function(e) {
     // When the user clicks Add
     L.DomEvent.addListener(L.DomUtil.get('add-button'), 'click', function() {
         // First, clean the potential-HTML they've added to the value.
-	var nombre = L.DomUtil.get('nombre').value;
-        var mensaje = L.DomUtil.get('mensaje').value;
+	    var olor = L.DomUtil.get('olor').value;
+        var lugar = L.DomUtil.get('lugar').value;
+        var esperado = L.DomUtil.get('esperado').value;
+        var intensidad = L.DomUtil.get('intensidad').value;
+        var movimiento = L.DomUtil.get('movimiento').value;
+        var sensacion = L.DomUtil.get('sensacion').value; 
+        var feeling = L.DomUtil.get('feeling').value;                
         // Get the current draggable marker's position and GeoJSON representation
         var geojson = marker.toGeoJSON();
         geojson.properties['marker-color'] = color;
-	geojson.properties.nombre = nombre;
+        geojson.properties.olor = olor;
+        geojson.properties.lugar = lugar;
+        geojson.properties.esperado = esperado;
+        geojson.properties.intensidad = intensidad;
+        geojson.properties.sensacion = sensacion;
+        geojson.properties.movimiento = movimiento;
+        geojson.properties.feeling = feeling;    
+        // Get the current draggable marker's position and GeoJSON representation
+        var geojson = marker.toGeoJSON();
+        geojson.properties['marker-color'] = color;
+	    geojson.properties.nombre = nombre;
         geojson.properties.mensaje = mensaje;
         // And save it to Firebase
         // base.push(geojson);
@@ -320,10 +327,14 @@ base.limit(200).on('child_added', function(snapshot) {
             // Which positions markers below the marker you drag, so that
             // they don't overlap in the z-index.
             l.setZIndexOffset(-1000)
+            l.setIcon(L.mapbox.marker.icon({//'marker-symbol': 'circle-stroked', 
+                                            "marker-size": "small",
+                                            'marker-color': '59245f'}));
+
             // And each marker should have a label with its title.
             var geojson = l.toGeoJSON();
-            if (geojson && geojson.properties && geojson.properties.title) {
-                l.bindLabel(L.mapbox.sanitize(geojson.properties.title), {
+            if (geojson && geojson.properties && geojson.properties.olor) {
+                l.bindLabel(L.mapbox.sanitize(geojson.properties.olor), {
                     noHide: true
                 });
             }
