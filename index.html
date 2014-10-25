@@ -112,7 +112,7 @@ fieldset { width:240px; }
 
 <div id='map'>
 <nav class='menu-ui'>
-  <a href='#' id='nuevo' class='active'>Nuevo olor</a>
+  <!--a href='#' id='nuevo' class='active'>Nuevo olor</a-->
   <a href='#' id='legend'>Información</a>
 </nav>
 </div>
@@ -211,7 +211,7 @@ var form5 = '<input id="olor" name="olor" placeholder="Olor" type="text">' +
 '</textarea>' + '<br />' +
 '<input id="add-button" name="add-button" type="submit" value="Añadir al mapa">';
 
-map = L.mapbox.map('map', 'examples.map-i86nkdio').setView(pamplona, 13);
+map = L.mapbox.map('map', 'examples.map-i86nkdio').setView(pamplona, 15);
 
 
     // Generate a random color for the marker, just for fun.
@@ -257,8 +257,8 @@ var marker = L.marker(pamplona, {
         geojson.properties.feeling = feeling;        
         // And save it to Firebase
         base.push(geojson);
-	    console.log('enviado');
-	    map.getContainer().querySelector('#nuevo').className = '';
+	    //console.log('enviado');
+	    //map.getContainer().querySelector('#nuevo').className = '';
         marker.closePopup();
     });
 
@@ -268,7 +268,7 @@ fullscreenControl.addTo(map);
 var geocode = L.mapbox.geocoderControl('mapbox.places-v1');
 geocode.addTo(map);
 
-var legend = 'Smellmaps. Un proyecto de Kate. Visualización desarrollada por Alberto Labarga.';
+var legend = 'Smellmaps. Un proyecto de Kate McLean. Visualización desarrollada por Alberto Labarga.';
 
 map.getContainer().querySelector('#legend').onclick = function() {
     if (this.className === 'active') {
@@ -312,9 +312,9 @@ marker.on('dragend', function(e) {
 	    geojson.properties.nombre = nombre;
         geojson.properties.mensaje = mensaje;
         // And save it to Firebase
-        // base.push(geojson);
-	console.log('enviado');
-	map.getContainer().querySelector('#nuevo').className = '';
+        base.push(geojson);
+    	// console.log('enviado');
+    	//map.getContainer().querySelector('#nuevo').className = '';
         marker.closePopup();
     });
 });
